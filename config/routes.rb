@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   get 'posts/new', to: 'posts#new'
   post 'posts/create', to: 'posts#create'
   get 'posts/:id/edit', to: 'posts#edit', as: :edit_post
+  post 'posts/:id/update', to: 'posts#update', as: :update_post
+  post 'posts/:id/destroy', to: 'posts#destroy', as: :destroy_post
   get 'posts/index', to: 'posts#index'
   get 'posts/:id', to: 'posts#show', as: :post
 
