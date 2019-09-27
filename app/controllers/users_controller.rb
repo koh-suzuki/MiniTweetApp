@@ -4,12 +4,31 @@ class UsersController < ApplicationController
   end
   
   def new
+    @user = User.new
   end
   
   def create
     @user = User.new(name: params[:name], email: params[:email])
-    @user.save
-    redirect_to user_url @user
+    if @user.save
+      flash[:notice] = "ユーザーを新規登録しました！"
+      redirect_to user_url @user
+    else
+      render :new
+    end
+  end
+  
+  def edit
+    @user = User.find(params[:id])
+  end
+  
+  def update
+    @user = User.new(name: params[:name], email: params[:email])
+    if @user.save
+      flash[:notice] = "ユーザー情報を編集しました。"
+      redirect_to user_url @user
+    else
+      render :edit
+    end
   end
   
   def show
