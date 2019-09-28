@@ -1,4 +1,7 @@
 class UsersController < ApplicationController
+  before_action :authenticate_user, only:[:index, :show, :edit, :update]
+  before_action :limitation_login_user, only:[:new, :create, :login_page, :login]
+  before_action :limitation_correct_user, only:[:edit, :update]
   def index
     @users = User.all
   end
@@ -8,8 +11,13 @@ class UsersController < ApplicationController
   end
   
   def create
-    @user = User.new(name: params[:name], email: params[:email])
+    @user = User.new(name: params[:name], 
+                     email: params[:email],
+                     image: "default.png",
+                     password: params[:password],
+                     )
     if @user.save
+      session[:user_id] = @user.id
       flash[:notice] = "ユーザーを新規登録しました！"
       redirect_to user_url @user
     else
@@ -22,7 +30,13 @@ class UsersController < ApplicationController
   end
   
   def update
-    @user = User.new(name: params[:name], email: params[:email])
+    @user = User.find(params[:id])
+    @user.name = params[:name]
+    @user.email = params[:email]
+    if params[:image]
+      @user.image = "user_#{@user.id}.png"
+      File.binwrite("public/user_images/#{@user.image}", params[:image].read)
+    end
     if @user.save
       flash[:notice] = "ユーザー情報を編集しました。"
       redirect_to user_url @user
@@ -33,5 +47,28 @@ class UsersController < ApplicationController
   
   def show
     @user = User.find(params[:id])
+  end
+  
+  def login_page
+  end
+  
+  def login
+    @user = User.find_by(email: params[:email], password: params[:password])
+    if @user
+      session[:user_id] = @user.id
+      flash[:notice] = "ログインしました！"
+      redirect_to users_index_url
+    else
+      @error_message = "メールアドレスまたはパスワードが違います。"
+      @email = params[:email]
+      @password = params[:password]
+      render :login_page
+    end
+  end
+  
+  def logout
+    session[:user_id] = nil
+    flash[:notice] = "ログアウトしました。"
+    redirect_to login_url
   end
 end
