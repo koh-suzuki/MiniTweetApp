@@ -11,7 +11,7 @@ class PostsController < ApplicationController
   def create
     @post = Post.new(
       content: params[:content],
-      user_id: @current_user.id)
+      user_id: @current_user)
     if @post.save
       flash[:notice] = "新規投稿しました！"
       redirect_to posts_index_url
@@ -44,6 +44,6 @@ class PostsController < ApplicationController
   
   def show
     @post = Post.find(params[:id])
-    @user = User.find(@post.user_id)
+    @user = @post.user
   end
 end
