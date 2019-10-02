@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_action :authenticate_user, only:[:index, :show, :edit, :update]
   before_action :limitation_login_user, only:[:new, :create, :login_page, :login]
-  before_action :limitation_correct_user, only:[:edit, :update]
+  before_action :limitation_correct_user, only:[:edit, :update, :destroy]
   def index
     @users = User.all
   end
